@@ -1,0 +1,52 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.contact-card {
+  border: solid black 1px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  height: 170px;
+  padding: 0.5rem;
+  word-wrap: break-word;
+  justify-content: center;
+  margin: 0;
+  text-align: center;
+}
+
+.contact-list-body {
+  border:  solid black 1px;
+  padding: 2rem;
+  display:  flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.contact-list-body > div:last-child{
+  background-color: wheat;
+}
+
+h1 {
+  margin: 0;
+}
+
+.collapsed {
+  display: none;
+}
+
+.onHover:hover {
+  background-color: chartreuse;
+}
