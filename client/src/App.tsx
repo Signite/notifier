@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { AddContactRequest, AddNotifyGroupMemberRequest, AddNotifyGroupsRequest, API_URL, DeleteContactRequest, GetContactsRequest, GetNotifyGroupsRequest, RemoveNotifyGroupMemberRequest, SaveContactRequest } from './http'
+import { AddContactRequest, AddNotifyGroupMemberRequest, AddNotifyGroupsRequest, API_URL, DeleteContactRequest, DeleteNotifyGroupsRequest, GetContactsRequest, GetNotifyGroupsRequest, RemoveNotifyGroupMemberRequest, SaveContactRequest } from './http'
 import { iContact, iNotifyGorup } from './interfaces';
 
 
-const NotiFyGroupCard = ({ notifyGroup, onDelete }: { notifyGroup: iNotifyGorup, onDelete: Function }) => {
+const NotiFyGroupCard = ({ notifyGroup, onDelete, icontacts }: { notifyGroup: iNotifyGorup, onDelete: Function, icontacts: iContact[] }) => {
 
   const [collapsed, setCollapsed] = useState<boolean>(true);
-  const [contacts, setContacts] = useState<iContact[]>([]);
+  const [contacts] = useState<iContact[]>(icontacts);
   const [ntg, setNtg] = useState<iNotifyGorup>(notifyGroup);
 
-  const getContacts = async () => {
-    setContacts(await GetContactsRequest());
-  }
+  // const getContacts = async () => {
+  //   setContacts(await GetContactsRequest());
+  // }
 
-  useEffect(() => {
-    getContacts()
-  }, []);
+  // useEffect(() => {
+  //   getContacts()
+  // }, []);
 
   const addMemberClick = async (type: "email" | "telegram", member: string) => {
     const result = await AddNotifyGroupMemberRequest(ntg.name, type, member);
@@ -41,26 +41,34 @@ const NotiFyGroupCard = ({ notifyGroup, onDelete }: { notifyGroup: iNotifyGorup,
   };
 
   return (
-    <div>
-      <div className='onHover' onClick={() => setCollapsed(prev => !prev)}>
+    <div className={collapsed ? 'notify-group-card onHover ' : "notify-group-card-opened"}>
+      <div className='notify-group-header' onClick={() => setCollapsed(prev => !prev)}>
         <h3>{notifyGroup.name}</h3>
         <button className='btn' onClick={() => onDelete()}>Удалить</button>
       </div>
-      <div className={`${collapsed ? "collapsed" : ""}`}>
+      <div className={`notify-group-body ${collapsed ? "collapsed" : ""}`}>
         <h4>Email активные</h4>
-        {ntg.email.map(item => <span onClick={() => RemoveMemberClick("email", item)}>{item}</span>)}
         <h4>Email доступные</h4>
-        {contacts.filter(item => item.email && ntg.email.indexOf(item.name) == -1).map(item => <span onClick={() => addMemberClick("email", item.name)}>{item.name}</span>)}
         <h4>Telegram активные</h4>
-        {ntg.telegram.map(item => <span onClick={() => RemoveMemberClick("telegram", item)}>{item}</span>)}
         <h4>Telegram доступные</h4>
-        {contacts.filter(item => item.telegramId && ntg.telegram.indexOf(item.name) == -1).map(item => <span onClick={() => addMemberClick("telegram", item.name)}>{item.name}</span>)}
+        <div>
+          {ntg.email.map(item => <span key={item} onClick={() => RemoveMemberClick("email", item)}>{item}</span>)}
+        </div>
+        <div>
+          {contacts.filter(item => item.email && ntg.email.indexOf(item.name) == -1).map(item => <span key={item.name} onClick={() => addMemberClick("email", item.name)}>{item.name}</span>)}
+        </div>
+        <div>
+          {ntg.telegram.map(item => <span key={item} onClick={() => RemoveMemberClick("telegram", item)}>{item}</span>)}
+        </div>
+        <div>
+          {contacts.filter(item => item.telegramId && ntg.telegram.indexOf(item.name) == -1).map(item => <span key={item.name} onClick={() => addMemberClick("telegram", item.name)}>{item.name}</span>)}
+        </div>
       </div>
     </div>
   )
 }
 
-const NotifyGroupList = () => {
+const NotifyGroupList = ({ icontacts }: { icontacts: iContact[] }) => {
 
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const [newNotifyGroup, setNewNotifyGroup] = useState<string | null>(null);
@@ -88,14 +96,18 @@ const NotifyGroupList = () => {
   }
 
   const hadleDeleteClick = async (groupName: string) => {
-    console.log('Try to delete', groupName);
+    if (await DeleteNotifyGroupsRequest(groupName)) {
+      await getGroups();
+    } else {
+      alert("Ошибка при удалении группы");
+    }
   }
 
   return (
     <div>
       <h2 className='onHover' onClick={() => setCollapsed(prev => !prev)}>Группы рассылок</h2>
-      <div className={`${collapsed ? "collapsed" : ""}`}>
-        {notifyGroups.map(group => <NotiFyGroupCard notifyGroup={group} key={group.name} onDelete={() => { hadleDeleteClick(group.name) }} />)}
+      <div className={`${collapsed ? "collapsed" : "notify-group-list"}`}>
+        {notifyGroups.map(group => <NotiFyGroupCard icontacts={icontacts} notifyGroup={group} key={group.name} onDelete={() => { hadleDeleteClick(group.name) }} />)}
         {newNotifyGroup != null &&
           <div>
             <label>Имя группы:</label>
@@ -334,7 +346,7 @@ function App() {
           <button className='btn' onClick={saveEmailSettings}>Сохранить</button>
         </div>
       </div >
-      <NotifyGroupList />
+      {contacts && <NotifyGroupList icontacts={contacts} />}
       {contacts && <ContactsList contacts={contacts} update={getContacts} />}
     </div>
   )

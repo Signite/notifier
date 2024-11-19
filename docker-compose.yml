@@ -7,11 +7,15 @@ services:
       context: .
       args:
         - BASE_URL=/notifier
+        # - PROXY_HTTP=
+        # - PROXY_HTTPS=
     image: notifier
     ports:
       - 3000:3000
     environment:
       - PORT=3000
+      # - PROXY_HTTP=
+      # - PROXY_HTTPS=
     volumes:
       - ./data:/notifier/data
 # volumes:

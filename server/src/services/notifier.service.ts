@@ -12,7 +12,6 @@ export interface iNotifyData {
 }
 
 class NotifierService {
-
     static async SendMessage(notifyData: iNotifyData): Promise<any> {
         if (!notifyData.text) throw ApiError.BadRequest("Text field required");
         const result = {
@@ -29,21 +28,21 @@ class NotifierService {
         //Добавление данных из групп
         if (notifyData.groups) {
             for (let group of notifyData.groups) {
-                const gInfo = groups.find(item => item.name = group)
+                const gInfo = groups.find(item => item.name == group)              
                 if (gInfo) {
                     gInfo.email.forEach((item) => {
-                        const exist = contacts.find(contact => contact.name = item);
+                        const exist = contacts.find(contact => contact.name == item);
                         if (exist) emails.push(exist.email);
                     });
                     gInfo.telegram.forEach((item) => {
-                        const exist = contacts.find(contact => contact.name = item);
+                        const exist = contacts.find(contact => contact.name == item);                        
                         if (exist) telegramIds.push(exist.telegramId);
                     });
                 }
             }
         }
 
-        //Отправка телеграм        
+        //Отправка телеграм                
         for (let id of new Set(telegramIds)) {
             telegramUtil.sendMessage(id, notifyData.text);
         }

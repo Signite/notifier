@@ -1,15 +1,17 @@
 import TelegramBot from "node-telegram-bot-api";
 
+const PROXY = process.env.HTTPS_PROXY || ""
+
 class TgBot {
     _bot: TelegramBot | null = null;
 
     async init(token: string, name: string) {
         this._bot?.stopPolling();
         const bot = new TelegramBot(token, {
-            // request: {
-            //     url:"api.telegram.org",
-            //     proxy:""
-            // }
+            request: {
+                url: "api.telegram.org",
+                proxy: PROXY
+            },
             polling: true
         });
 
@@ -51,7 +53,7 @@ class TgBot {
             const result = await this._bot?.sendMessage(id, text);
             return result;
         } catch (err) {
-            console.log('TG SendMessage Error',id, text);
+            console.log('TG SendMessage Error', id, text);
         }
 
     }

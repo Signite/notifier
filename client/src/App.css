@@ -47,7 +47,7 @@ h1 {
 }
 
 
-.control-container > div {
+.control-container>div {
   overflow-y: auto;
   border-radius: var(--border-radius-2);
   background: var(--color-background);
@@ -92,4 +92,63 @@ h1 {
   justify-content: center;
   margin: 0;
   text-align: center;
+}
+
+.notify-group-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.notify-group-card {
+  background: var(--color-white);
+  padding: var(--card-padding);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--box-shadow);
+  transition: all 300ms ease;
+  margin: 0.5rem;
+  padding: 0;
+
+  & .notify-group-header>button {
+    scale: 0.5;
+  }
+}
+
+.notify-group-card-opened {
+  background: var(--color-white);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--box-shadow);
+  transition: all 300ms ease;
+  margin: 0.5rem;
+  padding: 0;
+  grid-column: 1/4;
+
+  & .notify-group-header>button {
+    scale: 0.5;
+  }
+}
+
+.notify-group-body {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 2rem auto;
+  padding-bottom: 1rem;
+
+  & div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    max-height: 50dvh;
+    overflow-y: auto;
+    gap: 0.3rem;
+
+    & span {
+      background: var(--color-white);
+      border-radius: var(--card-border-radius);
+      box-shadow: var(--box-shadow);
+      border: 1px solid black;
+      padding: 0.3rem;
+      width: min-content;
+    }
+  }
 }
