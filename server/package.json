@@ -1,11 +1,13 @@
 {
-  "name": "esplustm",
+  "name": "notifier",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "./src/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src"
+    "dev": "tsx watch src",
+    "build": "tsc --project tsconfig.json && tsc-alias",
+    "start": "node ./build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +27,7 @@
     "@types/node-telegram-bot-api": "^0.64.7",
     "@types/nodemailer": "^6.4.16",
     "@types/sha256": "^0.2.2",
+    "tsc-alias": "^1.8.10",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3"
   }

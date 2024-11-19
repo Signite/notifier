@@ -23,6 +23,8 @@ class ContactService {
     }
 
     static async UpdateContact(contact: iContact): Promise<iContact | null> {
+        console.log('contact for update', contact);
+        
         const result = await JsonDb.UpdateContact(contact);
         if (result) {
             return contact;

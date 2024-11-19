@@ -4,7 +4,7 @@ import { AddContactRequest, AddNotifyGroupMemberRequest, AddNotifyGroupsRequest,
 import { iContact, iNotifyGorup } from './interfaces';
 
 
-const NotiFyGroupCard = ({ notifyGroup }: { notifyGroup: iNotifyGorup }) => {
+const NotiFyGroupCard = ({ notifyGroup, onDelete }: { notifyGroup: iNotifyGorup, onDelete: Function }) => {
 
   const [collapsed, setCollapsed] = useState<boolean>(true);
   const [contacts, setContacts] = useState<iContact[]>([]);
@@ -42,7 +42,10 @@ const NotiFyGroupCard = ({ notifyGroup }: { notifyGroup: iNotifyGorup }) => {
 
   return (
     <div>
-      <h3 className='onHover' onClick={() => setCollapsed(prev => !prev)}>{notifyGroup.name}</h3>
+      <div className='onHover' onClick={() => setCollapsed(prev => !prev)}>
+        <h3>{notifyGroup.name}</h3>
+        <button className='btn' onClick={() => onDelete()}>Удалить</button>
+      </div>
       <div className={`${collapsed ? "collapsed" : ""}`}>
         <h4>Email активные</h4>
         {ntg.email.map(item => <span onClick={() => RemoveMemberClick("email", item)}>{item}</span>)}
@@ -66,7 +69,6 @@ const NotifyGroupList = () => {
   const getGroups = async () => {
     setNotifyGroups(await GetNotifyGroupsRequest());
     console.log(notifyGroups);
-
   }
 
   useEffect(() => {
@@ -79,24 +81,27 @@ const NotifyGroupList = () => {
         setNewNotifyGroup(null);
         await getGroups();
         console.log();
-
       } else {
         alert("Ошибка при сохранении группы");
       }
     }
   }
 
+  const hadleDeleteClick = async (groupName: string) => {
+    console.log('Try to delete', groupName);
+  }
+
   return (
     <div>
-      <h3 className='onHover' onClick={() => setCollapsed(prev => !prev)}>Группы рассылок</h3>
+      <h2 className='onHover' onClick={() => setCollapsed(prev => !prev)}>Группы рассылок</h2>
       <div className={`${collapsed ? "collapsed" : ""}`}>
-        {notifyGroups.map(group => <NotiFyGroupCard notifyGroup={group} key={group.name} />)}
+        {notifyGroups.map(group => <NotiFyGroupCard notifyGroup={group} key={group.name} onDelete={() => { hadleDeleteClick(group.name) }} />)}
         {newNotifyGroup != null &&
           <div>
             <label>Имя группы:</label>
             <input type='text' value={newNotifyGroup} onChange={(e) => setNewNotifyGroup(e.target.value)} />
-            <button onClick={handleSaveClick}>Сохранить</button>
-            <button onClick={() => setNewNotifyGroup(null)}>Отменить</button>
+            <button className='btn' onClick={handleSaveClick}>Сохранить</button>
+            <button className='btn' onClick={() => setNewNotifyGroup(null)}>Отменить</button>
           </div>
         }
         {newNotifyGroup == null &&
@@ -117,7 +122,7 @@ const ContactCard = ({ contact, update }: { contact: iContact, update: Function 
     let result = false;
     switch (action) {
       case "save": {
-        result = await SaveContactRequest(contact);
+        result = await SaveContactRequest({ name: contact.name, email, telegramId });
         break;
       }
       case "delete": {
@@ -133,7 +138,7 @@ const ContactCard = ({ contact, update }: { contact: iContact, update: Function 
   }
 
   return (
-    <div className='contact-card'>
+    <div className='contact-card custom-card'>
       <span>{contact.name}</span>
       <div>
         <label>Email:</label>
@@ -143,8 +148,8 @@ const ContactCard = ({ contact, update }: { contact: iContact, update: Function 
         <label>TelegramId:</label>
         <input type='text' value={telegramId} onChange={(e) => setTelegramId(e.target.value)} />
       </div>
-      <button onClick={() => hadnleButtonClick("save")}>Сохранить</button>
-      <button onClick={() => hadnleButtonClick("delete")}>Удалить</button>
+      <button className='btn' onClick={() => hadnleButtonClick("save")}>Сохранить</button>
+      <button className='btn' onClick={() => hadnleButtonClick("delete")}>Удалить</button>
     </div>
   )
 }
@@ -184,8 +189,8 @@ const ContactsList = ({ contacts, update }: { contacts: iContact[], update: Func
               <label>TelegramId:</label>
               <input type='text' value={newContact.telegramId} onChange={(e) => setNewContact(prev => { return { email: "", name: "", ...prev, telegramId: e.target.value } })} />
             </div>
-            <button onClick={handleSaveClick}>Сохранить</button>
-            <button onClick={() => setNewContact(null)}>Отменить</button>
+            <button className='btn' onClick={handleSaveClick}>Сохранить</button>
+            <button className='btn' onClick={() => setNewContact(null)}>Отменить</button>
           </div>
           :
           <div className='contact-card' key="new_contact" onClick={() => setNewContact({ name: "", email: "", telegramId: "" })}>
@@ -199,15 +204,11 @@ const ContactsList = ({ contacts, update }: { contacts: iContact[], update: Func
 }
 
 
+
 function App() {
   const [contacts, setContacts] = useState<iContact[] | null>(null);
   const getContacts = async () => {
-    const response = await fetch(`${API_URL}/api/contact`);
-    if (response.status == 200) {
-      const body = await response.json();
-      setContacts(body);
-      console.log(body);
-    }
+    setContacts(await GetContactsRequest());
   }
 
   const [passwords, setPassword] = useState({ oldPass: "", newPass: "", newPass2: "" });
@@ -222,7 +223,7 @@ function App() {
       return;
     }
 
-    const response = await fetch(`${API_URL}/api/user`, {
+    const response = await fetch(`${API_URL}api/user`, {
       headers: [
         ["content-type", "application/json; charset=utf-8"]
       ],
@@ -239,7 +240,7 @@ function App() {
 
   const [telegramSettings, setTelegramSettings] = useState({ token: "", name: "" });
   const getTelegramSettings = async () => {
-    const response = await fetch(`${API_URL}/api/telegram`)
+    const response = await fetch(`${API_URL}api/telegram`)
     if (response.status == 200) {
       const body = await response.json();
       setTelegramSettings(body);
@@ -247,7 +248,7 @@ function App() {
   }
   const saveTelegramSettings = async () => {
     const { token, name } = telegramSettings;
-    const response = await fetch(`${API_URL}/api/telegram`, {
+    const response = await fetch(`${API_URL}api/telegram`, {
       method: "POST",
       headers: [
         ["content-type", "application/json; charset=utf-8"]
@@ -265,14 +266,14 @@ function App() {
 
   const [emailSettings, setEmailSettings] = useState({ host: "", port: "", username: "", password: "" });
   const getEmailSettings = async () => {
-    const response = await fetch(`${API_URL}/api/email`)
+    const response = await fetch(`${API_URL}api/email`)
     if (response.status == 200) {
       const body = await response.json();
       setEmailSettings(body);
     }
   }
   const saveEmailSettings = async () => {
-    const response = await fetch(`${API_URL}/api/email`, {
+    const response = await fetch(`${API_URL}api/email`, {
       method: "POST",
       headers: [
         ["content-type", "application/json; charset=utf-8"]
@@ -288,59 +289,54 @@ function App() {
   }
 
   useEffect(() => {
+    // document.body.classList.toggle('dark-theme-variables')
     getContacts();
     getTelegramSettings();
     getEmailSettings();
   }, []);
 
   return (
-    <>
+    <div className='main-container'>
       <h1>Notifier Control Panel</h1>
-      <div className='wide-group-box'>
+      <div className='control-container'>
         <h2>Администрирование</h2>
         <div>
           <h3>Общие настройки</h3>
           <label>Старый пароль</label>
           <input type='password' onChange={(e) => setPassword((prev) => { return { ...prev, oldPass: e.target.value } })} />
-          <br></br>
+
           <label>Новый пароль</label>
           <input type='password' onChange={(e) => setPassword((prev) => { return { ...prev, newPass: e.target.value } })} />
-          <br></br>
+
           <label>Повторите новый пароль</label>
           <input type='password' onChange={(e) => setPassword((prev) => { return { ...prev, newPass2: e.target.value } })} />
-          <br></br>
-          <button onClick={changePassword}>Сменить пароль</button>
+
+          <button className='btn' onClick={changePassword}>Сменить пароль</button>
         </div>
         <div>
           <h3>Настройки телеграм бота</h3>
           <label>Название бота</label>
           <input type='text' value={telegramSettings.name} onChange={(e) => setTelegramSettings(prev => { return { ...prev, name: e.target.value } })} />
-          <br></br>
           <label>Токен</label>
           <input type='password' value={telegramSettings.token} placeholder='Оставьте пустым что бы не изменять' onChange={(e) => setTelegramSettings(prev => { return { ...prev, token: e.target.value } })} />
-          <br></br>
-          <button onClick={saveTelegramSettings}>Сохранить</button>
+          <button className='btn' onClick={saveTelegramSettings}>Сохранить</button>
         </div>
         <div>
           <h3>Настройки почтового ящика</h3>
           <label>Сервер</label>
           <input type='text' value={emailSettings.host} onChange={(e) => setEmailSettings(prev => { return { ...prev, host: e.target.value } })} />
-          <br></br>
           <label>Порт</label>
           <input type='text' value={emailSettings.port} onChange={(e) => setEmailSettings(prev => { return { ...prev, port: e.target.value } })} />
-          <br></br>
           <label>Логин</label>
           <input type='text' value={emailSettings.username} onChange={(e) => setEmailSettings(prev => { return { ...prev, username: e.target.value } })} />
-          <br></br>
           <label>Пароль</label>
           <input type='password' value={emailSettings.password} placeholder='Оставьте пустым что бы не изменять' onChange={(e) => setEmailSettings(prev => { return { ...prev, password: e.target.value } })} />
-          <br></br>
-          <button onClick={saveEmailSettings}>Сохранить</button>
+          <button className='btn' onClick={saveEmailSettings}>Сохранить</button>
         </div>
-        <NotifyGroupList />
-        {contacts && <ContactsList contacts={contacts} update={getContacts} />}
       </div >
-    </>
+      <NotifyGroupList />
+      {contacts && <ContactsList contacts={contacts} update={getContacts} />}
+    </div>
   )
 }
 

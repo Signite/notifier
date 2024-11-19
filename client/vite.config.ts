@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
+const BASE_URL = "/";
+
 export default defineConfig({
   plugins: [react()],
-  // base: "/notifier",
-  build: { outDir: "../esplusTM/public", emptyOutDir: true }
+  base: BASE_URL,
+  build: { outDir: "./public", emptyOutDir: true }
 })

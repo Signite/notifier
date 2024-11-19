@@ -43,22 +43,26 @@ class NotifierService {
             }
         }
 
-        //Отправка телеграм
+        //Отправка телеграм        
         for (let id of new Set(telegramIds)) {
             telegramUtil.sendMessage(id, notifyData.text);
         }
+
         const emailsSet = new Set(emails);
         const emailsStr = Array.from(emailsSet).join(";");
-        //Отправка почты
-        const mailResult = await Emailer.sendSimpleMail({
-            from: "",
-            to: emailsStr,
-            bcc: "",
-            html: "Some erros",
-            subject: "asda"
-        })
-        console.log('MailResult', mailResult);
-        
+
+        // Отправка почты
+        if (emailsStr) {
+            const mailResult = await Emailer.sendSimpleMail({
+                from: "",
+                to: emailsStr,
+                bcc: "",
+                html: "Some erros",
+                subject: "asda"
+            })
+            console.log('MailResult', mailResult);
+        }
+
         return { result };
     }
 }

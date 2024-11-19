@@ -1,68 +1,293 @@
+/*@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');*/
+
+/* --------------------- ROOT VARAIBLEC ------------------- */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --color-primary: #7380ec;
+  --color-primary-fade: #737feca9;
+  --color-danger: #ff7782;
+  --color-success: #41f1b6;  
+  --color-warning: #ffbb55;
+  --color-white: #fff;
+  --color-info-dark: #7d8da1;
+  --color-info-light: #dce1eb;
+  --color-dark: #363949;
+  --color-light: rgba(132, 139, 200, 0.18);
+  --color-primary-variant: #111e88;
+  --color-dark-variant: #677483;
+  --color-background: #f6f6f9;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  
+  --color-good-selected: #00ff22;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+  --color-dark-dashboard: rgba(80, 65, 65, 0.2);
+
+  --color-text: #363949;
+
+  --card-border-radius: 2rem;
+  --border-radius-1: 0.4rem;
+  --border-radius-2: 0.8rem;
+  --border-radius-3: 1.2rem;
+
+  --btn-border-radius: 0.2rem;
+
+  --card-padding: 1.8rem;
+  --padding-1: 1.2rem;
+
+  --box-shadow: 0 2rem 3rem var(--color-light);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* ========================= DARK THEME VARIIBLES ========================= */
+.dark-theme-variables {
+  --color-background: #181a1e;
+  --color-white: #202528;
+  --color-text: #f6f6f9;
+  --color-dark: #edeffd;
+  --color-dark-variant: #a3bdcc;
+  --color-light: rgba(0, 0, 0, 0.4);
+  --box-shadow: 0 2rem 3rem var(--color-light);
+  --color-dark-dashboard: rgba(238, 201, 201, 0.2);
 }
-a:hover {
-  color: #535bf2;
+
+* {
+  margin: 0;
+  padding: 0;
+  outline: 0;
+  appearance: none;
+  border: 0;
+  text-decoration: none;
+  list-style: none;
+  box-sizing: border-box;  
+}
+
+#root {
+  max-width: 100%;
+  padding: 0;
+}
+
+*::-webkit-scrollbar {
+  width: 0.7em;
+}
+
+*::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-variant);
+  /* outline: 1px solid slategrey; */
+  /* background-image: linear-gradient(180deg, #D0368A 0%, #708AD4 99%); */
+  box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+  border-radius: 100px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #5749d2;
+}
+
+html {
+  font-size: 14px;
+  /* scrollbar-color: #6969dd #e0e0e0;
+  scrollbar-width: thin; */
 }
 
 body {
-  margin: 0;
+  width: 98vw;
+  height: 100vh;
+  font-family: poppins, sans-serif;
+  font-size: 0.88rem;
+  background: var(--color-background);
+  user-select: none;
+  text-align: center;
+  /* overflow: hidden; */
+  color: var(--color-dark);
+}
+
+.main-container {
+  /* width: 100%; */
   display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 1rem;
+  /* width: 100%; */
+  /* height: 100%; */
+  /* overflow-y: auto; */
+  /* margin: 5px auto; */
+  /* gap: 1.8rem;
+  grid-template-columns: 14rem auto min-content; */
+}
+
+a {
+  color: var(--color-dark);
+}
+
+img {
+  display: flex;
+  width: 100%;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-weight: 800;
+  font-size: 1.8rem;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+h2 {
+  font-size: 1.4rem;
+}
+
+h3 {
+  font-size: 0.87;
+}
+
+h4 {
+  font-size: 0.8rem;
+}
+
+h5 {
+  font-size: 0.77rem;
+}
+
+small {
+  font-size: 0.75rem;
+}
+
+.hide {
+	display: none;
+}
+
+.profile-photo {
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.text-muted {
+  color: var(--color-info-dark);
+}
+
+p {
+  color: var(--color-dark-variant);
+}
+
+b {
+  color: var(--color-dark);
+}
+
+.primary {
+  color: var(--color-primary);
+}
+
+.danger {
+  color: var(--color-danger);
+}
+
+.success {
+  color: var(--color-success);
+}
+
+.warning {
+  color: var(--color-warning);
+}
+
+.main-content-container {
+  margin-top: 3.4rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 90vh;
+
+  /* scrollbar-color: #6969dd #e0e0e0;
+  scrollbar-width: thin; */
+}
+
+.btn {
+  background-image: linear-gradient(to bottom, #337ab7 0%, #265a88 100%);
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 20%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 15%), 0 1px 1px rgb(0 0 0 / 8%);
+  padding: 5px 10px;
+  line-height: 1.5;
+  border-radius: var(--btn-border-radius);
+  color: #ffffff;
+  font-size: 14px;
+  display: inline-block;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  touch-action: manipulation;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  overflow: visible;
+  margin: 0.2rem;
+  padding: 0.3rem 1rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.btn-success {
+  background: green;
+}
+
+.btn-danger {
+  background: var(--color-danger);
+}
+
+.btn:hover {
+  background-color: #265a88;
+  background-image: none;
+  border-color: #204d74;
+}
+
+.masonry-card-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input {
+  border: solid 2px var(--color-dark);
+  border-radius: var(--border-radius-1);
+  background-color: transparent;
+  padding: 5px;
+  width: 250px;
+  text-align: center;  
+}
+
+table {
+	background: var(--color-white);
+	width: 100%;
+	border-radius: var(--card-border-radius);
+	padding: var(--card-padding);
+	text-align: center;
+	box-shadow: var(--box-shadow);
+	transition: all 300ms ease;
+}
+
+table tbody td {
+	height: 2.8rem;
+	border-bottom: 1px solid var(--color-light);
+	color: var(--color-dark-variant);
+	background: var(--color-white);
+}
+
+table tbody tr:last-child td {
+	border: none; 
+}
+
+table:hover {
+	box-shadow: none;
+}
+
+.default-checkbox {
+  appearance: auto;
+}
+
+.custom-card {
+  background: var(--color-white);
+  padding: var(--card-padding);
+  border-radius: var(--card-border-radius);
+  box-shadow: var(--box-shadow);
+  transition: all 300ms ease;
+}
+
+.custom-card:hover {
+  box-shadow: none;
+  transform: scale(1.1);
 }

@@ -5,7 +5,13 @@ class TgBot {
 
     async init(token: string, name: string) {
         this._bot?.stopPolling();
-        const bot = new TelegramBot(token, { polling: true });
+        const bot = new TelegramBot(token, {
+            // request: {
+            //     url:"api.telegram.org",
+            //     proxy:""
+            // }
+            polling: true
+        });
 
         bot.on("polling_error", err => { console.log(err.message); bot.stopPolling() });
 
@@ -45,7 +51,7 @@ class TgBot {
             const result = await this._bot?.sendMessage(id, text);
             return result;
         } catch (err) {
-            console.log(id, text);
+            console.log('TG SendMessage Error',id, text);
         }
 
     }

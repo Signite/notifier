@@ -1,13 +1,13 @@
 import { iContact, iNotifyGorup } from "../interfaces";
 
 let _api_url = ""
-if (import.meta.env.DEV) _api_url = "http://localhost:3000"
+if (import.meta.env.DEV) _api_url = "http://localhost:3000/"
 // else _api_url = "/notifier";
 export const API_URL = _api_url;
 
 export async function GetContactsRequest(): Promise<iContact[]> {
     try {
-        const response = await fetch(`${API_URL}/api/contact`);
+        const response = await fetch(`${API_URL}api/contact`);
         if (response.status == 200) {
             const body = await response.json();
             return body;
@@ -21,7 +21,7 @@ export async function GetContactsRequest(): Promise<iContact[]> {
 
 export async function AddContactRequest(contact: iContact): Promise<boolean> {
     try {
-        const response = await fetch(`${API_URL}/api/contact`,
+        const response = await fetch(`${API_URL}api/contact`,
             {
                 method: "POST",
                 headers: [
@@ -42,7 +42,7 @@ export async function AddContactRequest(contact: iContact): Promise<boolean> {
 
 export async function SaveContactRequest(contact: iContact): Promise<boolean> {
     try {
-        const response = await fetch(`${API_URL}/api/contact`,
+        const response = await fetch(`${API_URL}api/contact`,
             {
                 method: "PUT",
                 headers: [
@@ -62,7 +62,7 @@ export async function SaveContactRequest(contact: iContact): Promise<boolean> {
 
 export async function DeleteContactRequest(contact: iContact): Promise<boolean> {
     try {
-        const response = await fetch(`${API_URL}/api/contact`,
+        const response = await fetch(`${API_URL}api/contact`,
             {
                 method: "DELETE",
                 headers: [
@@ -86,7 +86,7 @@ export async function DeleteContactRequest(contact: iContact): Promise<boolean> 
 
 export async function GetNotifyGroupsRequest(): Promise<iNotifyGorup[]> {
     try {
-        const response = await fetch(`${API_URL}/api/notifyGroup`)
+        const response = await fetch(`${API_URL}api/notifyGroup`)
         if (response.status == 200) {
             const body = await response.json();
             return body;
@@ -100,7 +100,7 @@ export async function GetNotifyGroupsRequest(): Promise<iNotifyGorup[]> {
 
 export async function AddNotifyGroupsRequest(name: string): Promise<boolean> {
     try {
-        const response = await fetch(`${API_URL}/api/notifyGroup`,
+        const response = await fetch(`${API_URL}api/notifyGroup`,
             {
                 method: "POST",
                 headers: [
@@ -120,7 +120,7 @@ export async function AddNotifyGroupsRequest(name: string): Promise<boolean> {
 
 export async function DeleteNotifyGroupsRequest(name: string): Promise<boolean> {
     try {
-        const response = await fetch(`${API_URL}/api/notifyGroup`,
+        const response = await fetch(`${API_URL}api/notifyGroup`,
             {
                 method: "DELETE",
                 headers: [
@@ -140,7 +140,7 @@ export async function DeleteNotifyGroupsRequest(name: string): Promise<boolean> 
 
 export async function AddNotifyGroupMemberRequest(group: string, type: string, member: string): Promise<boolean> {
     try {
-        const response = await fetch(`${API_URL}/api/notifyGroup/member`,
+        const response = await fetch(`${API_URL}api/notifyGroup/member`,
             {
                 method: "POST",
                 headers: [
@@ -160,7 +160,7 @@ export async function AddNotifyGroupMemberRequest(group: string, type: string, m
 
 export async function RemoveNotifyGroupMemberRequest(group: string, type: string, member: string): Promise<boolean> {
     try {
-        const response = await fetch(`${API_URL}/api/notifyGroup/member`,
+        const response = await fetch(`${API_URL}api/notifyGroup/member`,
             {
                 method: "DELETE",
                 headers: [

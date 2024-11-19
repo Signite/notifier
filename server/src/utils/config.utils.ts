@@ -3,7 +3,7 @@ import sha256 from "sha256";
 
 console.log("Config loading");
 
-const CONFIG_FILE_PATH = "config.json"
+const CONFIG_FILE_PATH = "../data/config.json"
 
 if (!fs.existsSync(CONFIG_FILE_PATH)) {
     console.log('Config file not exist. Create Config file');

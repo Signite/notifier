@@ -4,7 +4,7 @@ import { iNotifyGorup } from '../services/notifyGroup.service';
 
 console.log('JSON DB INIT');
 
-const FILE_PATH = "db.json";
+const FILE_PATH = "../data/db.json";
 
 if (!fs.existsSync(FILE_PATH)) {
     const emptyDb = {
@@ -38,10 +38,10 @@ class JsonDb {
     }
 
     static async UpdateContact(contact: iContact): Promise<boolean> {
-        const exist = this._db.contacts.find(item => item.name == contact.name)
+        const exist = this._db.contacts.find(item => item.name == contact.name)        
         if (exist) {
             exist.email = contact.email;
-            exist.telegramId = contact.telegramId;
+            exist.telegramId = contact.telegramId;            
             this.save();
             return true;
         }

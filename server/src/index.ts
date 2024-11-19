@@ -1,14 +1,18 @@
-import fs from 'fs';
 import express from 'express';
-import sha256 from 'sha256';
 
 import ApiRouter from './routes/api.router';
 import errorMiddleware from './middlewares/error.middleware';
 import authMiddleware from './middlewares/auth.middleware';
 import TgBot from './utils/telegram.util';
-import Emailer from './utils/email.utils';
 import config from './utils/config.utils';
 import cors from 'cors';
+import path, { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const PORT = process.env.PORT || config.server.port || 3000;
+
 //Init TG bot
 console.log("Try init telegram bot");
 if (config.telegram.token) {
@@ -22,22 +26,34 @@ const app = express();
 
 
 app.use(cors());
+
 app.use(express.json());
 app.use((req, res, next) => {
+    console.log("===== NEW REQUEST =====")
+    console.log(new Date());
     console.log(req.url);
     console.log(req.body);
-    // console.log(req);
+    console.log("=======================");
+    console.log("");
     next();
 })
-app.use(authMiddleware);
+
+if (process.env.npm_lifecycle_event != 'dev') {
+    app.use(authMiddleware);
+}
+
 
 app.use('/api', ApiRouter);
 app.use(express.static("public"));
 
 app.use(errorMiddleware);
 
-app.listen(config.server.port, () => {
-    console.log(`Server start at ${config.server.port} port.`);
+app.get('*', (_req, res) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+})
+
+app.listen(PORT, () => {
+    console.log(`Server start at ${PORT} port.`);
 })
 
 
