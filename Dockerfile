@@ -1,11 +1,11 @@
-FROM node:alpine AS builder
+FROM node:20.18.0-alpine AS builder
 
 ARG BASE_URL="/"
 ENV BASE_URL=${BASE_URL}
 
-ARG PROXY_HTTP=""
+ARG PROXY_HTTP=
 ENV PROXY_HTTP=${PROXY_HTTP}
-ARG PROXY_HTTPS=""
+ARG PROXY_HTTPS=
 ENV PROXY_HTTPS=${PROXY_HTTPS}
 
 RUN npm config set proxy ${PROXY_HTTP}
@@ -24,14 +24,14 @@ RUN npm i
 COPY ./server .
 RUN npm run build
 
-FROM node:alpine AS production
+FROM node:20.18.0-alpine AS production
 
 ARG NODE_ENV=production
 ENV NODE_ENT=${NODE_ENV}
 
-ARG PROXY_HTTP=""
+ARG PROXY_HTTP=
 ENV PROXY_HTTP=${PROXY_HTTP}
-ARG PROXY_HTTPS=""
+ARG PROXY_HTTPS=
 ENV PROXY_HTTPS=${PROXY_HTTPS}
 
 RUN npm config set proxy ${PROXY_HTTP}
