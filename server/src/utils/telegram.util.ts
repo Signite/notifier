@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 
-const PROXY = process.env.HTTPS_PROXY || ""
+const PROXY = process.env.PROXY_HTTPS || ""
 
 class TgBot {
     _bot: TelegramBot | null = null;
