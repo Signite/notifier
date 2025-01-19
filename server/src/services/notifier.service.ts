@@ -1,53 +1,61 @@
+import { ParseMode } from "node-telegram-bot-api";
 import ApiError from "../exceptions/api.error";
 import Emailer from "../utils/email.utils";
 import telegramUtil from "../utils/telegram.util";
 import ContactService from "./contact.service";
 import NotifyGroupService from "./notifyGroup.service";
 
-export interface iNotifyData {
+interface iNotifyAddresses {
+    emails?: string[] | undefined,
+    telegrams?: string[] | undefined,
+    groups?: string[] | undefined
+}
+
+export interface iNotifyData extends iNotifyAddresses {
     text: string | undefined,
-    email: string[] | undefined,
-    telegram: string[] | undefined,
-    groups: string[] | undefined
+}
+
+interface iNotifyAttachment {
+    type: string,
+    name: string,
+    caption: string,
+    data: string
+}
+
+export interface iNotifyDataV2 extends iNotifyAddresses {
+    message?: {
+        text?: string,
+        telegram?: {
+            type: ParseMode,
+            content: string
+        },
+        email?: {
+            content: string
+        }
+    },
+    attachments?: iNotifyAttachment[]
+}
+
+export interface iNotifyClientsList {
+    emails: Set<string>,
+    telegrams: Set<string>
 }
 
 class NotifierService {
+
     static async SendMessage(notifyData: iNotifyData): Promise<any> {
         if (!notifyData.text) throw ApiError.BadRequest("Text field required");
         const result = {
             errors: []
         }
-        const emails: string[] = [];
-        const telegramIds: string[] = [];
-        const groups = await NotifyGroupService.GetGroup();
-        const contacts = await ContactService.GetContact();
-
-        if (notifyData.telegram) telegramIds.push(...notifyData.telegram);
-        if (notifyData.email) emails.push(...notifyData.email);
-
-        //Добавление данных из групп
-        if (notifyData.groups) {
-            for (let group of notifyData.groups) {
-                const gInfo = groups.find(item => item.name == group)              
-                if (gInfo) {
-                    gInfo.email.forEach((item) => {
-                        const exist = contacts.find(contact => contact.name == item);
-                        if (exist) emails.push(exist.email);
-                    });
-                    gInfo.telegram.forEach((item) => {
-                        const exist = contacts.find(contact => contact.name == item);                        
-                        if (exist) telegramIds.push(exist.telegramId);
-                    });
-                }
-            }
-        }
+        const clients = await getNotifyClientList(notifyData);
 
         //Отправка телеграм                
-        for (let id of new Set(telegramIds)) {
+        for (let id of clients.telegrams) {
             telegramUtil.sendMessage(id, notifyData.text);
         }
 
-        const emailsSet = new Set(emails);
+        const emailsSet = clients.emails;
         const emailsStr = Array.from(emailsSet).join(";");
 
         // Отправка почты
@@ -64,6 +72,47 @@ class NotifierService {
 
         return { result };
     }
+
+    static async SendMessageV2(data: iNotifyDataV2): Promise<any> {
+
+        const clients = await getNotifyClientList(data);
+
+        if (clients.telegrams?.size > 0) {
+            telegramUtil.sendMessageV2(data, clients);
+        }
+        return clients;
+    }
+}
+
+
+async function getNotifyClientList(notifyAddresses: iNotifyAddresses): Promise<iNotifyClientsList> {
+
+    const emails: string[] = [];
+    const telegramIds: string[] = [];
+    const groups = await NotifyGroupService.GetGroup();
+    const contacts = await ContactService.GetContact();
+
+    if (notifyAddresses.telegrams) telegramIds.push(...notifyAddresses.telegrams);
+    if (notifyAddresses.emails) emails.push(...notifyAddresses.emails);
+
+    //Добавление данных из групп
+    if (notifyAddresses.groups) {
+        for (let group of notifyAddresses.groups) {
+            const gInfo = groups.find(item => item.name == group)
+            if (gInfo) {
+                gInfo.email.forEach((item) => {
+                    const exist = contacts.find(contact => contact.name == item);
+                    if (exist) emails.push(exist.email);
+                });
+                gInfo.telegram.forEach((item) => {
+                    const exist = contacts.find(contact => contact.name == item);
+                    if (exist) telegramIds.push(exist.telegramId);
+                });
+            }
+        }
+    }
+
+    return ({ telegrams: new Set(telegramIds), emails: new Set(emails) });
 }
 
 export default NotifierService;

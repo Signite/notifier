@@ -1,0 +1,5 @@
+Some text file
+with
+multiple lines!
+
+И русскими буквами!
