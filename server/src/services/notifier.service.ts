@@ -16,9 +16,10 @@ export interface iNotifyData extends iNotifyAddresses {
 }
 
 interface iNotifyAttachment {
-    type: string,
+    type?: string,
     name: string,
-    caption: string,
+    caption?: string,
+    cid?: string,
     data: string
 }
 
@@ -30,7 +31,10 @@ export interface iNotifyDataV2 extends iNotifyAddresses {
             content: string
         },
         email?: {
-            content: string
+            splitLetters: boolean,
+            from?: string,
+            html?: string,
+            subject?: string,
         }
     },
     attachments?: iNotifyAttachment[]
@@ -80,6 +84,11 @@ class NotifierService {
         if (clients.telegrams?.size > 0) {
             telegramUtil.sendMessageV2(data, clients);
         }
+
+        if (clients.emails?.size > 0) {
+            Emailer.sendEmail(data, clients);
+        }
+
         return clients;
     }
 }

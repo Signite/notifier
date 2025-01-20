@@ -32,7 +32,7 @@ class TgBot {
             polling: true
         });
 
-        bot.on("polling_error", err => { console.log(err.message); bot.stopPolling() });
+        bot.on("polling_error", err => { console.log("error while polling",err.message); bot.stopPolling() });
 
         bot.on("text", async msg => {
             // console.log(msg);
@@ -108,24 +108,6 @@ class TgBot {
         } catch (err) {
             console.log('ERROR TELEGRAM SendMessageV2', err);
         }
-
-
-
-
-        // }
-        // if (notifyData.message?.telegram?.content)
-
-        // if (notifyData.telegrams)
-        // console.log(notifyData.telegrams && notifyData.attachments);
-        // try {
-        //     if (notifyData.telegrams && notifyData.attachments) {
-        //         const result = await this._bot?.sendDocument(notifyData.telegrams[0], Buffer.from(notifyData.attachments[0].data, 'base64'));
-        //         console.log('result ',result);
-        //         return result;
-        //     }
-        // } catch (err) {
-        //     console.log('TG SendMessageV2 Error');
-        // }
     }
 };
 
